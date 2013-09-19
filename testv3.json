@@ -1,0 +1,205 @@
+{
+    "lastPingDate": "2013-06-29",
+    "thisPingDate": "2013-07-03",
+    "version": 3,
+    "environments": {
+        "current": {
+            "org.mozilla.sysinfo.sysinfo": {
+                "memoryMB": 1567,
+                "cpuCount": 4,
+                "architecture": "armeabi-v7a",
+                "_v": 1,
+                "version": "4.1.2",
+                "name": "Android"
+            },
+            "org.mozilla.profile.age": {
+                "_v": 1,
+                "profileCreation": 15827
+            },
+            "org.mozilla.addons.active": {
+                "QuitNow@TWiGSoftware.com": {
+                    "appDisabled": false,
+                    "userDisabled": false,
+                    "scope": 1,
+                    "updateDay": 15885,
+                    "foreignInstall": false,
+                    "hasBinaryComponents": false,
+                    "blocklistState": 0,
+                    "type": "extension",
+                    "installDay": 15885,
+                    "version": "1.18.02"
+                },
+                "{dbbf9331-b713-6eda-1006-205efead09dc}": {
+                    "appDisabled": false,
+                    "userDisabled": "askToActivate",
+                    "scope": 8,
+                    "updateDay": 15779,
+                    "foreignInstall": true,
+                    "blocklistState": 0,
+                    "type": "plugin",
+                    "installDay": 15779,
+                    "version": "11.1 r115"
+                },
+                "desktopbydefault@bnicholson.mozilla.org": {
+                    "appDisabled": false,
+                    "userDisabled": true,
+                    "scope": 1,
+                    "updateDay": 15870,
+                    "foreignInstall": false,
+                    "hasBinaryComponents": false,
+                    "blocklistState": 0,
+                    "type": "extension",
+                    "installDay": 15870,
+                    "version": "1.1"
+                },
+                "{6e092a7f-ba58-4abb-88c1-1a4e50b217e4}": {
+                    "appDisabled": false,
+                    "userDisabled": false,
+                    "scope": 1,
+                    "updateDay": 15828,
+                    "foreignInstall": false,
+                    "hasBinaryComponents": false,
+                    "blocklistState": 0,
+                    "type": "extension",
+                    "installDay": 15828,
+                    "version": "1.1.0"
+                },
+                "{46551EC9-40F0-4e47-8E18-8E5CF550CFB8}": {
+                    "appDisabled": false,
+                    "userDisabled": true,
+                    "scope": 1,
+                    "updateDay": 15879,
+                    "foreignInstall": false,
+                    "hasBinaryComponents": false,
+                    "blocklistState": 0,
+                    "type": "extension",
+                    "installDay": 15879,
+                    "version": "1.3.2"
+                },
+                "_v": 1
+            },
+            "org.mozilla.appInfo.appinfo": {
+                "isTelemetryEnabled": 1,
+                "_v": 2,
+                "isBlocklistEnabled": 1
+            },
+            "geckoAppInfo": {
+                "updateChannel": "nightly",
+                "id": "{aa3c5121-dab2-40e2-81ca-7ea25febc110}",
+                "os": "Android",
+                "platformBuildID": "20130703031323",
+                "platformVersion": "25.0a1",
+                "vendor": "Mozilla",
+                "name": "fennec",
+                "xpcomabi": "arm-eabi-gcc3",
+                "appBuildID": "20130703031323",
+                "_v": 1,
+                "version": "25.0a1"
+            },
+            "hash": "tB4Pnnep9yTxnMDymc3dAB2RRB0=",
+            "org.mozilla.addons.counts": {
+                "extension": 4,
+                "plugin": 1,
+                "_v": 1,
+                "theme": 0
+            }
+        },
+        "k2O3hlreMeS7L1qtxeMsYWxgWWQ=": {
+            "geckoAppInfo": {
+                "platformBuildID": "20130630031138",
+                "appBuildID": "20130630031138",
+                "_v": 1
+            }
+        },
+        "1+KN9TutMpzdl4TJEl+aCxK+xcw=": {
+            "geckoAppInfo": {
+                "platformBuildID": "20130626031100",
+                "appBuildID": "20130626031100",
+                "_v": 1
+            },
+            "org.mozilla.addons.active": {
+                "QuitNow@TWiGSoftware.com": null,
+                "{dbbf9331-b713-6eda-1006-205efead09dc}": null,
+                "desktopbydefault@bnicholson.mozilla.org": null,
+                "{6e092a7f-ba58-4abb-88c1-1a4e50b217e4}": null,
+                "{46551EC9-40F0-4e47-8E18-8E5CF550CFB8}": null,
+                "_v": 1
+            },
+            "org.mozilla.addons.counts": {
+                "extension": 0,
+                "plugin": 0,
+                "_v": 1
+            }
+        }
+    },
+    "data": {
+        "last": {},
+        "days": {
+            "2013-07-03": {
+                "tB4Pnnep9yTxnMDymc3dAB2RRB0=": {
+                    "org.mozilla.appSessions": {
+                        "normal": [
+                            {
+                                "r": "P",
+                                "d": 2,
+                                "sj": 653
+                            },
+                            {
+                                "r": "P",
+                                "d": 22
+                            },
+                            {
+                                "r": "P",
+                                "d": 5
+                            },
+                            {
+                                "r": "P",
+                                "d": 0
+                            },
+                            {
+                                "r": "P",
+                                "sg": 3560,
+                                "d": 171,
+                                "sj": 518
+                            },
+                            {
+                                "r": "P",
+                                "d": 16
+                            },
+                            {
+                                "r": "P",
+                                "d": 1079
+                            }
+                        ],
+                        "_v": "4"
+                    }
+                },
+                "k2O3hlreMeS7L1qtxeMsYWxgWWQ=": {
+                    "org.mozilla.appSessions": {
+                        "normal": [
+                            {
+                                "r": "P",
+                                "d": 27
+                            },
+                            {
+                                "r": "P",
+                                "d": 19
+                            },
+                            {
+                                "r": "P",
+                                "d": 55
+                            }
+                        ],
+                        "_v": "4"
+                    },
+                    "org.mozilla.searches.counts": {
+                        "bartext": {
+                            "google": 1
+                        },
+                        "_v": "4"
+                    }
+                }
+            }
+        }
+    }
+}
