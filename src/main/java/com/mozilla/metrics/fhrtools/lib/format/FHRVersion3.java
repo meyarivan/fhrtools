@@ -6,6 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Writable;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -17,7 +20,7 @@ import java.util.Collections;
 import java.util.Date;
 
 public class FHRVersion3 implements FHRData {
-  private final SimpleDateFormat dateFmt = new SimpleDateFormat("yyyy-mm-dd");
+  private final DateTimeFormatter dateFmt = DateTimeFormat.forPattern("yyyy-MM-dd");
   private final JSONObject root;
   private final short version;
   private byte[] hash;
@@ -27,7 +30,7 @@ public class FHRVersion3 implements FHRData {
     try {
       root = JSON.parseObject(jsonStr);
       version = root.getShort("version");
-    } catch (JSONException e) {
+    } catch (Exception e) {
       throw new UnableToParseException();
     }
   }
@@ -40,12 +43,12 @@ public class FHRVersion3 implements FHRData {
     return root.getJSONObject("data").getJSONObject("days");
   }
 
-  public final Date getCurrentPingDate() throws ParseException {
-    return dateFmt.parse(root.getString("thisPingDate"));
+  public final LocalDate getCurrentPingDate() {
+    return dateFmt.parseDateTime(root.getString("thisPingDate")).toLocalDate();
   }
 
-  public final Date getLastPingDate() throws ParseException {
-    return dateFmt.parse(root.getString("lastPingDate"));
+  public final LocalDate getLastPingDate() {
+    return dateFmt.parseDateTime(root.getString("lastPingDate")).toLocalDate();
   }
 
   public String toString() {
