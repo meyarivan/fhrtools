@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
@@ -19,7 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-class FindOrphanReducer extends Reducer<BytesWritable, Put, Text, Text> {
+class FindOrphanReducer extends Reducer<ImmutableBytesWritable, Result, Text, Text> {
 
   static Log LOG = LogFactory.getLog(FindOrphanReducer.class);
   private final byte[] colFamily = Bytes.toBytes("data");
@@ -33,21 +36,22 @@ class FindOrphanReducer extends Reducer<BytesWritable, Put, Text, Text> {
   private long orphans = 0, exactCopies=0;
   private Text keyObj = new Text(), valObj = new Text();
 
-  private byte[] getData(final Put p) {
-    return p.get(colFamily, colId).get(0).getValue();
+
+  private byte[] getData(final Result p) {
+    return p.getValue(colFamily, colId);
   }
 
-  private JSONObject getJSON(final Put p) {
+  private JSONObject getJSON(final Result p) {
     return JSON.parseObject(Bytes.toString(getData(p)));
 
   }
 
   @Override
-  protected void reduce(final BytesWritable key, final Iterable<Put> values,
+  protected void reduce(final ImmutableBytesWritable key, final Iterable<Result> values,
                         final Context context) throws IOException, java.lang.InterruptedException {
 
-    for (Map.Entry<Put, Boolean> entry: filterOrphans(values).entrySet()) {
-      Put b = entry.getKey();
+    for (Map.Entry<Result, Boolean> entry: filterOrphans(values).entrySet()) {
+      Result b = entry.getKey();
 
       keyObj.set(b.getRow());
       valObj.set(getData(b));
@@ -62,12 +66,13 @@ class FindOrphanReducer extends Reducer<BytesWritable, Put, Text, Text> {
     }
   }
 
-  private Map<Put, Boolean> filterOrphans(final Iterable<Put> values) {
-    HashMap<Put, Boolean> all = new HashMap<Put, Boolean>();
-    HashMap<Put, TreeMap<LocalDate, byte[]>> checksums = new HashMap<Put, TreeMap<LocalDate, byte[]>>();
+  private Map<Result, Boolean> filterOrphans(final Iterable<Result> values) throws IOException {
+    HashMap<Result, Boolean> all = new HashMap<Result, Boolean>();
+    HashMap<Result, TreeMap<LocalDate, byte[]>> checksums = new HashMap<Result, TreeMap<LocalDate, byte[]>>();
 
-    for (Put p : values) {
-      Put np = new Put(p);
+    for (Result r : values) {
+      Result np = new Result();
+      np.copyFrom(r);
       all.put(np, false);
       checksums.put(np, getChecksums(np));
     }
@@ -75,8 +80,8 @@ class FindOrphanReducer extends Reducer<BytesWritable, Put, Text, Text> {
     if (all.size() == 1)
       return all;
 
-    Put pi, pj, orphan;
-    final Put[] allKeys = all.keySet().toArray(new Put[0]);
+    Result pi, pj, orphan;
+    final Result[] allKeys = all.keySet().toArray(new Result[0]);
 
     for (int i = 0; i < all.size(); i++) {
       pi = allKeys[i];
@@ -105,7 +110,7 @@ class FindOrphanReducer extends Reducer<BytesWritable, Put, Text, Text> {
           }
           else if (d == Decision.DUPLICATES) {
             exactCopies += 1;
-            if (pi.getTimeStamp() < pj.getTimeStamp()) { // TODO Fix Criterion
+            if (pi.getColumnLatest(colFamily, colId).getTimestamp() < pj.getColumnLatest(colFamily, colId).getTimestamp()) { // TODO Fix Criterion
               orphan = pj;
             }
             else {
@@ -128,9 +133,9 @@ class FindOrphanReducer extends Reducer<BytesWritable, Put, Text, Text> {
     return dateFmt.parseDateTime(dateStr).toLocalDate();
   }
 
-  private Decision resolveDups(final JSONObject objA, final JSONObject objB) {
+  private Decision resolveDups(final JSONObject objA, final JSONObject objB) {   // TODO refactor+cleanup
 
-    if (Arrays.equals(md.digest(Bytes.toBytes(objA.toString())),  md.digest(Bytes.toBytes(objB.toString())))) { // TODO strong hash comparison or byte comparison might be faster
+    if (Arrays.equals(md.digest(Bytes.toBytes(objA.toString())),  md.digest(Bytes.toBytes(objB.toString())))) {
       return Decision.DUPLICATES;
     } else {
       LocalDate aCurrentPingDate, aLastPingDate, bCurrentPingDate, bLastPingDate;
@@ -223,19 +228,19 @@ class FindOrphanReducer extends Reducer<BytesWritable, Put, Text, Text> {
     mos = new MultipleOutputs(context);
   }
 
-  private TreeMap<LocalDate, byte[]> getChecksums(final Put p) {
+  private TreeMap<LocalDate, byte[]> getChecksums(final Result p) {
 
     TreeMap<LocalDate, byte[]> ret = new TreeMap<LocalDate, byte[]>();
 
     JSONObject json = getJSON(p);
-    JSONObject data = json.getJSONObject("data").getJSONObject("days");
+    JSONObject data = json.getJSONObject("data").getJSONObject("days"); // TODO
 
     for (String s : data.keySet()) {
       try {
         LocalDate d = parseDate(s);
         ret.put(d, md.digest(data.getJSONObject(s).toString().getBytes()));
       } catch (IllegalArgumentException e) {
-        LOG.warn("Invalid date for row " + p.getRow() + " " + e.getMessage());
+        LOG.warn("Invalid date for row " + Bytes.toString(p.getRow()) + " " + e.getMessage());
       }
     }
 
