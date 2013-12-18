@@ -31,9 +31,9 @@ class FindOrphanReducer extends Reducer<ImmutableBytesWritable, Result, Text, Te
 
   private MessageDigest md;
   private MultipleOutputs mos;
-  public enum Counters { ORPHANS, EXACT_COPIES };
+  public enum Counters { ORPHANS, EXACT_COPIES, INVALID_DAYS_DATA };
   private enum Decision { CHOOSE_FIRST, CHOOSE_SECOND, DUPLICATES, UNDECIDED, UNRELATED };
-  private long orphans = 0, exactCopies=0;
+  private long orphans = 0, exactCopies=0, invalidDaysData=0;
   private Text keyObj = new Text(), valObj = new Text();
 
 
@@ -183,6 +183,7 @@ class FindOrphanReducer extends Reducer<ImmutableBytesWritable, Result, Text, Te
   public void cleanup(final Context context) throws IOException, InterruptedException {
     context.getCounter(Counters.ORPHANS).increment(orphans);
     context.getCounter(Counters.EXACT_COPIES).increment(exactCopies);
+    context.getCounter(Counters.INVALID_DAYS_DATA).increment(invalidDaysData);
     mos.close();
   }
 
@@ -241,6 +242,9 @@ class FindOrphanReducer extends Reducer<ImmutableBytesWritable, Result, Text, Te
         ret.put(d, md.digest(data.getJSONObject(s).toString().getBytes()));
       } catch (IllegalArgumentException e) {
         LOG.warn("Invalid date for row " + Bytes.toString(p.getRow()) + " " + e.getMessage());
+      } catch (ClassCastException e) {
+        System.err.println("Unable to compute hash for day " + s + " " + json.toString());
+        invalidDaysData += 1;
       }
     }
 

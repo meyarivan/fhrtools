@@ -71,8 +71,8 @@ class FindOrphanMapper extends Mapper<ImmutableBytesWritable, Result, ImmutableB
     } catch (UnableToParseException e) {
       nFailed += 1;
       return;
-    } catch (NullPointerException e) {
-      System.err.println("NPE " + Bytes.toString(row.get()));
+    } catch (Exception e) {
+      System.err.println("Unhandled exception during parsing : " + Bytes.toString(row.get()));
       unHandled += 1;
     }
   }
